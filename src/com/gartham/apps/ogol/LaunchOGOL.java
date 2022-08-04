@@ -19,7 +19,7 @@ public class LaunchOGOL {
 		canvas.addGLEventListener(new OGOLEventListener());// Performs rendering.
 
 		JFrame window = new JFrame();
-		window.setName("OpenGL Game of Life");
+		window.setTitle("OpenGL Game of Life");
 		window.getContentPane().add(canvas);
 
 		window.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
