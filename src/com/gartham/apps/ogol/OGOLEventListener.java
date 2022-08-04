@@ -1,9 +1,9 @@
-package com.gartham.templates.jogl;
+package com.gartham.apps.ogol;
 
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 
-public final class TemplateEventListener implements GLEventListener {
+public final class OGOLEventListener implements GLEventListener {
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		// TODO Auto-generated method stub
