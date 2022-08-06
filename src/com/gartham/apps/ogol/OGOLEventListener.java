@@ -25,28 +25,22 @@ public final class OGOLEventListener implements GLEventListener {
 					// First triangle
 					floats.add(i * 2f / board.length - 1);
 					floats.add(j * 2f / board[i].length - 1);
-					floats.add(0f);
 
 					floats.add((i + 1) * 2f / board.length - 1);
 					floats.add(j * 2f / board[i].length - 1);
-					floats.add(0f);
 
 					floats.add((i + 1) * 2f / board.length - 1);
 					floats.add((j + 1) * 2f / board[i].length - 1);
-					floats.add(0f);
 
 					// Second triangle
 					floats.add(i * 2f / board.length - 1);
 					floats.add(j * 2f / board[i].length - 1);
-					floats.add(0f);
 
 					floats.add((i + 1) * 2f / board.length - 1);
 					floats.add((j + 1) * 2f / board[i].length - 1);
-					floats.add(0f);
 
 					floats.add(i * 2f / board.length - 1);
 					floats.add((j + 1) * 2f / board[i].length - 1);
-					floats.add(0f);
 				}
 
 		Float[] f = floats.toArray(new Float[floats.size()]);
@@ -142,12 +136,12 @@ public final class OGOLEventListener implements GLEventListener {
 		gl.glEnableVertexAttribArray(0);
 		// The last parameter is the number of bytes in the float array above to offset
 		// before reading.
-		gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
+		gl.glVertexAttribPointer(0, 2, GL.GL_FLOAT, false, 0, 0);
 		// If call was gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 4, 4);, then
 		// you could put another float val in front of array (first four bytes will be
 		// skipped over in array).
 
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertbuff.capacity() / 3);
+		gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertbuff.capacity() / 2);
 
 		gl.glDisableVertexAttribArray(0);
 		gl.glUseProgram(0);
