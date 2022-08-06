@@ -8,7 +8,7 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 
 public class LaunchOGOL {
-	private static final int DEFAULT_WIDTH = 800, DEFAULT_HEIGHT = 600;
+	private static final int DEFAULT_WIDTH = 1000, DEFAULT_HEIGHT = 1000;
 
 	public static void main(String[] args) {
 		GLProfile prof = GLProfile.get(GLProfile.GL4);
@@ -32,6 +32,6 @@ public class LaunchOGOL {
 		// Include an FPS-based animator, if desired.
 		// Without this, the GLCanvas's EventListener's #display(GLAutoDrawable) method
 		// is only called a set number of times.
-//		new FPSAnimator(canvas, 144, true).start();
+		new FPSAnimator(canvas, 144, true).start();
 	}
 }

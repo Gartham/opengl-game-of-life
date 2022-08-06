@@ -3,8 +3,11 @@ package com.gartham.apps.ogol;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
+import com.gartham.libs.gameoflife.GameOfLife;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -13,8 +16,55 @@ import com.jogamp.opengl.util.GLBuffers;
 
 public final class OGOLEventListener implements GLEventListener {
 
+	private static float[] tilize(boolean[][] board) {
+		List<Float> floats = new ArrayList<>();
+
+		for (int i = 0; i < board.length; i++)
+			for (int j = 0; j < board[i].length; j++)
+				if (board[i][j]) {
+					// First triangle
+					floats.add(i * 2f / board.length - 1);
+					floats.add(j * 2f / board[i].length - 1);
+					floats.add(0f);
+
+					floats.add((i + 1) * 2f / board.length - 1);
+					floats.add(j * 2f / board[i].length - 1);
+					floats.add(0f);
+
+					floats.add((i + 1) * 2f / board.length - 1);
+					floats.add((j + 1) * 2f / board[i].length - 1);
+					floats.add(0f);
+
+					// Second triangle
+					floats.add(i * 2f / board.length - 1);
+					floats.add(j * 2f / board[i].length - 1);
+					floats.add(0f);
+
+					floats.add((i + 1) * 2f / board.length - 1);
+					floats.add((j + 1) * 2f / board[i].length - 1);
+					floats.add(0f);
+
+					floats.add(i * 2f / board.length - 1);
+					floats.add((j + 1) * 2f / board[i].length - 1);
+					floats.add(0f);
+				}
+
+		Float[] f = floats.toArray(new Float[floats.size()]);
+		float[] res = new float[f.length];
+		for (int i = 0; i < res.length; i++)
+			res[i] = f[i];
+
+		return res;
+	}
+
 	private int prog, vertBuffHandle, vao;
-	private FloatBuffer vertbuff = GLBuffers.newDirectFloatBuffer(new float[] { -1f, -.1f, 0, -.1f, 0, 0, 0, 0, 0 });
+	private final GameOfLife gol = new GameOfLife(1000, 1000);
+	{
+		gol.randomize();
+	}
+
+	private FloatBuffer vertbuff = GLBuffers.newDirectFloatBuffer(tilize(gol.getBoard()));
+//	(new float[] { -1f, -1f, 0, 1f, 1f, 0f, -1f, 1f, 0f });
 
 	public static String loadShader(InputStream is) {
 		Scanner s = new Scanner(is);
@@ -80,26 +130,36 @@ public final class OGOLEventListener implements GLEventListener {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
 		drawable.getGL().glClearColor(0, 0, 0, 1);
 		drawable.getGL().glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		GL3 gl = drawable.getGL().getGL3();
 
-//		gl.glClearBufferfv(GL3.GL_COLOR, 0, FloatBuffer.wrap(new float[] { 0, 1, 0 }));
-
+		// Draw game.
 		gl.glUseProgram(prog);
 
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertBuffHandle);
 		gl.glEnableVertexAttribArray(0);
 		// The last parameter is the number of bytes in the float array above to offset
 		// before reading.
-		gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 4, 0);
+		gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 0, 0);
+		// If call was gl.glVertexAttribPointer(0, 3, GL.GL_FLOAT, false, 4, 4);, then
+		// you could put another float val in front of array (first four bytes will be
+		// skipped over in array).
 
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, 3);
+		gl.glDrawArrays(GL.GL_TRIANGLES, 0, vertbuff.capacity() / 3);
 
 		gl.glDisableVertexAttribArray(0);
 		gl.glUseProgram(0);
+
+		// Tick game.
+		gol.tick();
+		vertbuff = GLBuffers.newDirectFloatBuffer(tilize(gol.getBoard()));
+
+		// Reassign to buffer.
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vertBuffHandle);
+		gl.glBufferData(GL.GL_ARRAY_BUFFER, vertbuff.capacity() * Float.BYTES, vertbuff, GL.GL_STATIC_DRAW);
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 
 	}
 }
